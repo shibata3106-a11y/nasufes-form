@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="2026年11月7日に名古屋で開催する、ナスフェス 2026の参加申込フォームです。">
+  <title>ナスフェス 2026｜参加申込フォーム</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__decoration hero__decoration--left" aria-hidden="true"></div>
+    <div class="hero__decoration hero__decoration--right" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <p class="eyebrow">みんなで集まる、楽しい一日</p>
+      <h1>ナスフェス <span>2026</span></h1>
+      <p class="hero__lead">2026年11月7日（土）、<br class="mobile-break">今年も名古屋で「ナスフェス」を開催します。</p>
+      <p class="hero__text">農業の新しいつながりを作ろうとしている<br class="desktop-break">オルゴールが、応援している農家さんを<br class="desktop-break">知ってもらうために、<br class="desktop-break">みんなで楽しく交流しながら過ごすイベントです。<br class="desktop-break">初めての方も、お子さん連れの方も大歓迎です！</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="overview container" aria-labelledby="overview-title">
+      <div class="section-heading">
+        <p class="section-heading__label">EVENT INFO</p>
+        <h2 id="overview-title">開催概要</h2>
+      </div>
+
+      <div class="info-grid">
+        <article class="info-card info-card--date">
+          <div class="info-card__icon" aria-hidden="true">📅</div>
+          <div>
+            <h3>開催日</h3>
+            <p><strong>2026年11月7日</strong><span>土曜日</span></p>
+          </div>
+        </article>
+
+        <article class="info-card info-card--place">
+          <div class="info-card__icon" aria-hidden="true">📍</div>
+          <div>
+            <h3>開催場所</h3>
+            <p><strong>愛知県名古屋市中村区<br>名駅南1-3-14</strong><span>石原ビル 5F</span></p>
+          </div>
+        </article>
+
+        <article class="info-card info-card--capacity">
+          <div class="info-card__icon" aria-hidden="true">👥</div>
+          <div>
+            <h3>定員</h3>
+            <p><strong>25名</strong><span>お早めにお申し込みください</span></p>
+          </div>
+        </article>
+
+        <article class="info-card info-card--fee">
+          <div class="info-card__icon" aria-hidden="true">💰</div>
+          <div>
+            <h3>参加費</h3>
+            <p><strong>大人 4,500円</strong><span>子ども無料</span></p>
+            <p class="payment-note">PayPay または現地支払い</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="application-section" aria-labelledby="application-title">
+      <div class="container form-container">
+        <div class="section-heading section-heading--form">
+          <p class="section-heading__label">ENTRY FORM</p>
+          <h2 id="application-title">参加申し込み</h2>
+          <p>以下のフォームに必要事項をご入力ください。</p>
+        </div>
+
+        <div class="form-card">
+          <div class="availability-status availability-status--loading" id="availability-status" role="status" aria-live="polite">
+            <span class="availability-status__icon" aria-hidden="true">●</span>
+            <p id="availability-text">現在の残席を確認しています…</p>
+          </div>
+
+          <div class="form-alert" id="form-alert" role="alert" tabindex="-1" hidden></div>
+
+          <form id="entry-form" novalidate>
+            <p class="required-guide"><span class="required-badge">必須</span>は入力必須の項目です</p>
+
+            <div class="field-group">
+              <label for="name">お名前（アカウント名OK） <span class="required-badge">必須</span></label>
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="例：なす太郎" aria-describedby="name-error" required>
+              <p class="error-message" id="name-error" aria-live="polite"></p>
+            </div>
+
+            <div class="field-group">
+              <label for="email">メールアドレス <span class="required-badge">必須</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="例：nasufes@example.com" aria-describedby="email-error" required>
+              <p class="error-message" id="email-error" aria-live="polite"></p>
+            </div>
+
+            <fieldset class="field-group">
+              <legend>参加の可否 <span class="required-badge">必須</span></legend>
+              <div class="choice-list">
+                <label class="choice-card">
+                  <input type="radio" name="attendance" value="参加" aria-describedby="attendance-error" aria-controls="participant-fields support-notice" required>
+                  <span>ナスフェスに参加します</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="attendance" value="支援" aria-controls="participant-fields support-notice">
+                  <span>ナスフェスに参加できませんが、PayPayで支援します</span>
+                </label>
+              </div>
+              <p class="error-message" id="attendance-error" aria-live="polite"></p>
+            </fieldset>
+
+            <div class="support-notice" id="support-notice" role="status" hidden>
+              <span class="support-notice__icon" aria-hidden="true">♥</span>
+              <p>ありがとうございます。PayPayでの支援方法は、後ほどご案内します。</p>
+            </div>
+
+            <div class="support-fields" id="support-fields" hidden>
+              <div class="field-group">
+                <label for="support-units">支援口数 <span class="required-badge">必須</span></label>
+                <div class="select-wrap">
+                  <select id="support-units" name="supportUnits" aria-describedby="support-units-note support-units-error">
+                    <option value="1">1口</option>
+                    <option value="2">2口</option>
+                    <option value="3">3口</option>
+                    <option value="4">4口</option>
+                    <option value="5">5口</option>
+                  </select>
+                </div>
+                <p class="support-unit-note" id="support-units-note">1口 2,000円</p>
+                <p class="error-message" id="support-units-error" aria-live="polite"></p>
+              </div>
+              <p class="support-amount" id="support-amount" aria-live="polite">ご支援金額：<strong>2,000円</strong></p>
+            </div>
+
+            <div class="conditional-fields" id="participant-fields" hidden>
+              <div class="people-grid">
+                <div class="field-group">
+                  <label for="adults">大人の参加人数 <span class="required-badge">必須</span></label>
+                  <div class="select-wrap">
+                    <select id="adults" name="adults" aria-describedby="people-error">
+                      <option value="0">0人</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <label for="children">子どもの参加人数 <span class="required-badge">必須</span></label>
+                  <div class="select-wrap">
+                    <select id="children" name="children" aria-describedby="people-error">
+                      <option value="0">0人</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <p class="error-message people-error" id="people-error" aria-live="polite"></p>
+
+              <fieldset class="field-group">
+                <legend>支払い方法 <span class="required-badge">必須</span></legend>
+                <div class="choice-list choice-list--payment">
+                  <label class="choice-card">
+                    <input type="radio" name="paymentChoice" value="PayPay" aria-describedby="payment-error">
+                    <span>PayPayで支払う</span>
+                  </label>
+                  <label class="choice-card">
+                    <input type="radio" name="paymentChoice" value="現地支払い">
+                    <span>現地で支払う</span>
+                  </label>
+                </div>
+                <p class="error-message" id="payment-error" aria-live="polite"></p>
+              </fieldset>
+            </div>
+
+            <input type="hidden" id="payment-method" name="payment" value="">
+
+            <div class="field-group">
+              <label for="message">質問・メッセージ <span class="optional-badge">任意</span></label>
+              <textarea id="message" name="message" rows="5" placeholder="ご質問や主催者へのメッセージがあればご入力ください"></textarea>
+            </div>
+
+            <button class="submit-button" type="submit">
+              <span>申込内容を確認する</span>
+              <span class="submit-button__arrow" aria-hidden="true">→</span>
+            </button>
+            <p class="privacy-note">確認画面で確定するまで、入力内容は送信されません。</p>
+          </form>
+
+          <div class="confirmation-screen" id="confirmation-screen" tabindex="-1" hidden>
+            <p class="confirmation-screen__label">CONFIRMATION</p>
+            <h3>申込内容の確認</h3>
+            <p class="confirmation-screen__lead">以下の内容でよろしければ「この内容で申し込む」を押してください。</p>
+            <dl class="confirmation-details" id="confirmation-details"></dl>
+            <div class="confirmation-actions">
+              <button type="button" id="edit-button" class="secondary-button">入力内容を修正する</button>
+              <button type="button" id="confirm-button" class="submit-button confirm-button">この内容で申し込む</button>
+            </div>
+          </div>
+
+          <div class="success-message" id="success-message" tabindex="-1" role="status" hidden>
+            <div class="success-message__icon" aria-hidden="true">✓</div>
+            <p class="success-message__small">THANK YOU!</p>
+            <h3 id="success-title">お申し込みありがとうございます</h3>
+            <div id="success-body"></div>
+            <p class="email-warning" id="email-warning" role="alert" hidden>お申し込みは受け付けましたが、確認メールの送信に問題が発生した可能性があります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><span aria-hidden="true">🍆</span> ナスフェス 2026</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
