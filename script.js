@@ -27,10 +27,17 @@ const supportNotice = document.getElementById("support-notice");
 const supportFields = document.getElementById("support-fields");
 const supportUnitsSelect = document.getElementById("support-units");
 const supportAmount = document.getElementById("support-amount");
+const afterPartyChoiceBlock = document.getElementById("after-party-choice-block");
+const afterPartyFields = document.getElementById("after-party-fields");
+const afterPartyAdultsSelect = document.getElementById("after-party-adults");
+const afterPartyChildrenSelect = document.getElementById("after-party-children");
 const paymentMethod = document.getElementById("payment-method");
 const attendanceInputs = [...form.elements.attendance];
 const paymentInputs = [...form.elements.paymentChoice];
+const afterPartyInputs = [...form.elements.afterPartyParticipation];
 const participateInput = attendanceInputs.find((input) => input.value === "参加");
+const joinAfterPartyInput = afterPartyInputs.find((input) => input.value === "参加");
+const skipAfterPartyInput = afterPartyInputs.find((input) => input.value === "不参加");
 
 let isFull = false;
 let isSubmitting = false;
@@ -40,6 +47,8 @@ let pendingSubmissionData = null;
 for (let count = 1; count <= 25; count += 1) {
   adultsSelect.add(new Option(`${count}人`, String(count)));
   childrenSelect.add(new Option(`${count}人`, String(count)));
+  afterPartyAdultsSelect.add(new Option(`${count}人`, String(count)));
+  afterPartyChildrenSelect.add(new Option(`${count}人`, String(count)));
 }
 
 const errorTargets = {
@@ -48,7 +57,9 @@ const errorTargets = {
   attendance: document.getElementById("attendance-error"),
   people: document.getElementById("people-error"),
   payment: document.getElementById("payment-error"),
-  supportUnits: document.getElementById("support-units-error")
+  supportUnits: document.getElementById("support-units-error"),
+  afterParty: document.getElementById("after-party-error"),
+  afterPartyPeople: document.getElementById("after-party-people-error")
 };
 
 function showError(key, message, elements) {
@@ -98,7 +109,8 @@ function getSelectedPaymentMethod() {
 function updateAttendanceFields() {
   const attendance = form.elements.attendance.value;
   const isParticipating = attendance === "参加";
-  const isSupporting = attendance === "支援";
+  const isSupporting = attendance === "PayPay支援";
+  const isMainAbsentWithAfterParty = attendance === "本編不参加";
 
   participantFields.hidden = !isParticipating;
   supportNotice.hidden = !isSupporting;
@@ -109,6 +121,13 @@ function updateAttendanceFields() {
   paymentInputs.forEach((input) => {
     input.disabled = !isParticipating;
   });
+
+  afterPartyChoiceBlock.hidden = isMainAbsentWithAfterParty;
+
+  if (isMainAbsentWithAfterParty) {
+    joinAfterPartyInput.checked = true;
+    skipAfterPartyInput.checked = false;
+  }
 
   clearError("people", [adultsSelect, childrenSelect]);
   clearError("payment", paymentInputs.map((input) => input.closest("label")));
@@ -122,6 +141,23 @@ function updateAttendanceFields() {
   } else {
     paymentMethod.value = "";
   }
+
+  updateAfterPartyFields();
+}
+
+function updateAfterPartyFields() {
+  const isJoiningAfterParty = form.elements.afterPartyParticipation.value === "参加";
+
+  afterPartyFields.hidden = !isJoiningAfterParty;
+  afterPartyAdultsSelect.disabled = !isJoiningAfterParty;
+  afterPartyChildrenSelect.disabled = !isJoiningAfterParty;
+  clearError("afterParty", afterPartyInputs.map((input) => input.closest("label")));
+  clearError("afterPartyPeople", [afterPartyAdultsSelect, afterPartyChildrenSelect]);
+
+  if (!isJoiningAfterParty) {
+    afterPartyAdultsSelect.value = "0";
+    afterPartyChildrenSelect.value = "0";
+  }
 }
 
 function setAvailability(result) {
@@ -134,7 +170,7 @@ function setAvailability(result) {
 
   if (full) {
     availabilityStatus.classList.add("availability-status--full");
-    availabilityText.textContent = "定員に達したため、参加申し込みの受付は終了しました。\nPayPayでのご支援は引き続き受け付けています。";
+    availabilityText.textContent = "定員に達したため、本編参加の受付は終了しました。\n本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。";
   } else {
     availabilityStatus.classList.add("availability-status--open");
     availabilityText.textContent = hasRemaining
@@ -181,7 +217,9 @@ function validateForm() {
   let firstInvalidElement = null;
   const attendance = form.elements.attendance.value;
   const isParticipating = attendance === "参加";
-  const isSupporting = attendance === "支援";
+  const isSupporting = attendance === "PayPay支援";
+  const afterPartyParticipation = form.elements.afterPartyParticipation.value;
+  const isJoiningAfterParty = afterPartyParticipation === "参加";
   const selectedPaymentMethod = getSelectedPaymentMethod();
   const supportUnits = Number(supportUnitsSelect.value);
 
@@ -191,6 +229,8 @@ function validateForm() {
   clearError("people", [adultsSelect, childrenSelect]);
   clearError("payment", paymentInputs.map((input) => input.closest("label")));
   clearError("supportUnits", [supportUnitsSelect]);
+  clearError("afterParty", afterPartyInputs.map((input) => input.closest("label")));
+  clearError("afterPartyPeople", [afterPartyAdultsSelect, afterPartyChildrenSelect]);
 
   if (nameInput.value.trim() === "") {
     showError("name", "お名前を入力してください。", [nameInput]);
@@ -236,21 +276,46 @@ function validateForm() {
     isValid = false;
   }
 
+  if (!afterPartyParticipation) {
+    showError("afterParty", "二次会への参加・不参加を選択してください。", afterPartyInputs.map((input) => input.closest("label")));
+    firstInvalidElement = firstInvalidElement || afterPartyInputs[0];
+    isValid = false;
+  }
+
+  if (
+    isJoiningAfterParty &&
+    Number(afterPartyAdultsSelect.value) === 0 &&
+    Number(afterPartyChildrenSelect.value) === 0
+  ) {
+    showError("afterPartyPeople", "二次会の参加人数を1名以上選択してください。", [afterPartyAdultsSelect, afterPartyChildrenSelect]);
+    firstInvalidElement = firstInvalidElement || afterPartyAdultsSelect;
+    isValid = false;
+  }
+
   return { isValid, firstInvalidElement };
 }
 
 function buildSubmissionData() {
-  const isParticipating = form.elements.attendance.value === "参加";
+  const participationType = form.elements.attendance.value;
+  const isParticipating = participationType === "参加";
+  const isSupporting = participationType === "PayPay支援";
+  const afterPartyParticipation = form.elements.afterPartyParticipation.value;
+  const isJoiningAfterParty = afterPartyParticipation === "参加";
 
   return {
     name: nameInput.value.trim(),
     email: emailInput.value.trim(),
-    participationType: isParticipating ? "参加" : "PayPay支援",
+    participationType,
     adults: isParticipating ? Number(adultsSelect.value) : 0,
     children: isParticipating ? Number(childrenSelect.value) : 0,
-    paymentMethod: isParticipating ? getSelectedPaymentMethod() : PAYMENT_METHODS.PAYPAY,
+    paymentMethod: isParticipating
+      ? getSelectedPaymentMethod()
+      : (isSupporting ? PAYMENT_METHODS.PAYPAY : ""),
     message: messageInput.value.trim(),
-    supportUnits: isParticipating ? 0 : Number(supportUnitsSelect.value)
+    supportUnits: isSupporting ? Number(supportUnitsSelect.value) : 0,
+    afterPartyParticipation,
+    afterPartyAdults: isJoiningAfterParty ? Number(afterPartyAdultsSelect.value) : 0,
+    afterPartyChildren: isJoiningAfterParty ? Number(afterPartyChildrenSelect.value) : 0
   };
 }
 
@@ -269,18 +334,32 @@ function showConfirmation(data) {
   confirmationDetails.replaceChildren();
   addConfirmationRow("お名前", data.name);
   addConfirmationRow("メールアドレス", data.email);
-  addConfirmationRow("参加区分", data.participationType);
 
   if (data.participationType === "参加") {
+    addConfirmationRow("本編", "参加");
     addConfirmationRow("大人人数", `${data.adults}人`);
     addConfirmationRow("子ども人数", `${data.children}人`);
     addConfirmationRow("合計人数", `${data.adults + data.children}人`);
     const paymentLabel = data.paymentMethod === PAYMENT_METHODS.ON_SITE ? "現地払い" : "PayPay";
     addConfirmationRow("支払い方法", paymentLabel);
+  } else if (data.participationType === "本編不参加") {
+    addConfirmationRow("本編", "不参加");
   } else {
+    addConfirmationRow("参加区分", "PayPay支援");
     addConfirmationRow("支援口数", `${data.supportUnits}口`);
     addConfirmationRow("1口あたり", "2,000円");
     addConfirmationRow("支援金額", formatYen(data.supportUnits * SUPPORT_PRICE));
+  }
+
+  if (data.afterPartyParticipation === "参加") {
+    addConfirmationRow("二次会", "参加");
+    addConfirmationRow("二次会大人人数", `${data.afterPartyAdults}人`);
+    addConfirmationRow("二次会子ども人数", `${data.afterPartyChildren}人`);
+    addConfirmationRow("二次会合計人数", `${data.afterPartyAdults + data.afterPartyChildren}人`);
+    addConfirmationRow("開始", "17:30〜");
+    addConfirmationRow("二次会のご案内", "席のみの予約、食事は個別注文になります");
+  } else {
+    addConfirmationRow("二次会", "不参加");
   }
 
   addConfirmationRow("質問・メッセージ", data.message);
@@ -326,9 +405,13 @@ function showSuccess(result, data) {
     const eventLine = document.createElement("p");
     eventLine.textContent = "ナスフェスは2026年11月7日（土）に開催します。";
     successBody.append(firstLine, eventLine);
-  } else {
+  } else if (data.participationType === "PayPay支援") {
     successTitle.textContent = "ご支援ありがとうございます";
     firstLine.textContent = "ご登録いただいたメールアドレスへPayPayのお支払い案内を送信しました。";
+    successBody.append(firstLine);
+  } else {
+    successTitle.textContent = "お申し込みありがとうございます";
+    firstLine.textContent = "ご登録いただいたメールアドレスへ確認メールを送信しました。";
     successBody.append(firstLine);
   }
 
@@ -356,7 +439,7 @@ function handleRejectedResult(result, data) {
   if (data.participationType === "参加" && isFullResult(result)) {
     setAvailability({ ...result, full: true, remaining: 0 });
     returnToForm();
-    showFormAlert("定員に達しました。参加申し込みの受付は終了しました。PayPayでのご支援は引き続き受け付けています。", true);
+    showFormAlert("定員に達しました。本編参加の受付は終了しました。本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。", true);
     return;
   }
 
@@ -449,10 +532,25 @@ attendanceInputs.forEach((input) => {
   });
 });
 
+afterPartyInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    hideFormAlert();
+    updateAfterPartyFields();
+  });
+});
+
 [adultsSelect, childrenSelect].forEach((select) => {
   select.addEventListener("change", () => {
     if (Number(adultsSelect.value) > 0 || Number(childrenSelect.value) > 0) {
       clearError("people", [adultsSelect, childrenSelect]);
+    }
+  });
+});
+
+[afterPartyAdultsSelect, afterPartyChildrenSelect].forEach((select) => {
+  select.addEventListener("change", () => {
+    if (Number(afterPartyAdultsSelect.value) > 0 || Number(afterPartyChildrenSelect.value) > 0) {
+      clearError("afterPartyPeople", [afterPartyAdultsSelect, afterPartyChildrenSelect]);
     }
   });
 });
@@ -471,5 +569,6 @@ supportUnitsSelect.addEventListener("change", () => {
 });
 
 updateAttendanceFields();
+updateAfterPartyFields();
 updateSupportAmount();
 loadAvailability();

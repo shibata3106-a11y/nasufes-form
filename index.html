@@ -31,7 +31,7 @@
           <div class="info-card__icon" aria-hidden="true">📅</div>
           <div>
             <h3>開催日</h3>
-            <p><strong>2026年11月7日</strong><span>土曜日</span></p>
+            <p><strong>2026年11月7日</strong><span>土曜日・12:00〜17:00</span></p>
           </div>
         </article>
 
@@ -60,6 +60,11 @@
           </div>
         </article>
       </div>
+
+      <aside class="after-party-summary">
+        <span class="after-party-summary__label">二次会</span>
+        <p><strong>17時30分～</strong>（席のみの予約、食事は個別注文になります）</p>
+      </aside>
     </section>
 
     <section class="application-section" aria-labelledby="application-title">
@@ -94,14 +99,18 @@
             </div>
 
             <fieldset class="field-group">
-              <legend>参加の可否 <span class="required-badge">必須</span></legend>
+              <legend>ナスフェス本編について <span class="required-badge">必須</span></legend>
               <div class="choice-list">
                 <label class="choice-card">
-                  <input type="radio" name="attendance" value="参加" aria-describedby="attendance-error" aria-controls="participant-fields support-notice" required>
+                  <input type="radio" name="attendance" value="参加" aria-describedby="attendance-error" aria-controls="participant-fields support-notice support-fields" required>
                   <span>ナスフェスに参加します</span>
                 </label>
                 <label class="choice-card">
-                  <input type="radio" name="attendance" value="支援" aria-controls="participant-fields support-notice">
+                  <input type="radio" name="attendance" value="本編不参加" aria-controls="participant-fields support-notice support-fields">
+                  <span>ナスフェス本編には参加できませんが二次会に参加します</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="attendance" value="PayPay支援" aria-controls="participant-fields support-notice support-fields">
                   <span>ナスフェスに参加できませんが、PayPayで支援します</span>
                 </label>
               </div>
@@ -170,6 +179,47 @@
             </div>
 
             <input type="hidden" id="payment-method" name="payment" value="">
+
+            <fieldset class="field-group after-party-section">
+              <legend>二次会について <span class="required-badge">必須</span></legend>
+              <div id="after-party-choice-block">
+                <p class="after-party-section__note">17:30〜／席のみの予約です。食事は個別注文になります。</p>
+                <div class="choice-list choice-list--two">
+                  <label class="choice-card">
+                    <input type="radio" name="afterPartyParticipation" value="参加" aria-describedby="after-party-error" aria-controls="after-party-fields" required>
+                    <span>二次会に参加します</span>
+                  </label>
+                  <label class="choice-card">
+                    <input type="radio" name="afterPartyParticipation" value="不参加" aria-controls="after-party-fields">
+                    <span>二次会には参加しません</span>
+                  </label>
+                </div>
+                <p class="error-message" id="after-party-error" aria-live="polite"></p>
+              </div>
+
+              <div class="after-party-fields" id="after-party-fields" hidden>
+                <div class="people-grid">
+                  <div class="field-group">
+                    <label for="after-party-adults">二次会の大人人数 <span class="required-badge">必須</span></label>
+                    <div class="select-wrap">
+                      <select id="after-party-adults" name="afterPartyAdults" aria-describedby="after-party-people-error">
+                        <option value="0">0人</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="after-party-children">二次会の子ども人数 <span class="required-badge">必須</span></label>
+                    <div class="select-wrap">
+                      <select id="after-party-children" name="afterPartyChildren" aria-describedby="after-party-people-error">
+                        <option value="0">0人</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <p class="error-message" id="after-party-people-error" aria-live="polite"></p>
+              </div>
+            </fieldset>
 
             <div class="field-group">
               <label for="message">質問・メッセージ <span class="optional-badge">任意</span></label>
