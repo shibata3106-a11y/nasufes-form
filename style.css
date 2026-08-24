@@ -246,6 +246,37 @@ h1 span {
   font-weight: 700;
 }
 
+.after-party-summary {
+  display: flex;
+  margin-top: 18px;
+  padding: 17px 21px;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #d9c4e5;
+  border-radius: 14px;
+  color: var(--purple-900);
+  background: linear-gradient(135deg, var(--purple-50), #f3f8e8);
+}
+
+.after-party-summary__label {
+  flex: 0 0 auto;
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: var(--white);
+  background: var(--purple-700);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.after-party-summary p {
+  margin: 0;
+}
+
+.after-party-summary strong {
+  color: var(--purple-700);
+  font-size: 18px;
+}
+
 .application-section {
   padding: 70px 0 82px;
   background:
@@ -434,6 +465,10 @@ select {
   grid-template-columns: 1fr 1fr;
 }
 
+.choice-list--two {
+  grid-template-columns: 1fr 1fr;
+}
+
 .choice-card {
   display: flex;
   min-height: 56px;
@@ -481,6 +516,34 @@ select {
 
 .people-error {
   margin-bottom: 29px;
+}
+
+.child-age-section {
+  margin: -10px 0 29px;
+  padding: 20px;
+  border: 1px solid #dfcee8;
+  border-radius: 13px;
+  background: #fdfaff;
+}
+
+.child-age-section__title {
+  margin: 0 0 14px;
+  color: var(--purple-900);
+  font-weight: 700;
+}
+
+.child-age-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.child-age-list .field-group {
+  margin-bottom: 0;
+}
+
+.child-age-list label {
+  font-size: 15px;
 }
 
 .support-notice {
@@ -544,6 +607,34 @@ select {
 .support-amount strong {
   color: var(--purple-700);
   font-size: 22px;
+}
+
+.after-party-section {
+  margin-top: 6px;
+  padding-top: 27px;
+  border-top: 2px solid var(--purple-100);
+}
+
+.after-party-section__note {
+  margin: -2px 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.after-party-fields {
+  margin-top: 17px;
+  padding: 21px;
+  border: 1px solid #dfcee8;
+  border-radius: 13px;
+  background: #fdfaff;
+}
+
+.after-party-fields .people-grid .field-group {
+  margin-bottom: 0;
+}
+
+.after-party-fields > .error-message {
+  margin-top: 8px;
 }
 
 .error-message {
@@ -821,7 +912,9 @@ footer p {
 
   .info-grid,
   .people-grid,
-  .choice-list--payment {
+  .child-age-list,
+  .choice-list--payment,
+  .choice-list--two {
     grid-template-columns: 1fr;
   }
 
@@ -830,8 +923,19 @@ footer p {
     padding: 21px;
   }
 
+  .after-party-summary {
+    padding: 16px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .people-grid {
     gap: 0;
+  }
+
+  .child-age-list {
+    gap: 16px;
   }
 
   .people-grid .field-group:first-child {
@@ -844,7 +948,8 @@ footer p {
 
   .availability-status,
   .form-alert,
-  .support-fields {
+  .support-fields,
+  .after-party-fields {
     padding: 14px;
   }
 
