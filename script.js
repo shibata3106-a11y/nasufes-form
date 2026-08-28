@@ -282,9 +282,7 @@ function setAvailability(result) {
     availabilityText.textContent = "定員に達したため、本編参加の受付は終了しました。\n本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。";
   } else {
     availabilityStatus.classList.add("availability-status--open");
-    availabilityText.textContent = hasRemaining
-      ? `現在の残席：${Math.max(remaining, 0)}名`
-      : "現在、参加申し込みを受け付けています。";
+    availabilityText.textContent = "現在、参加申し込みを受け付けています。";
   }
 
   participateInput.disabled = full;
@@ -310,14 +308,14 @@ async function loadAvailability() {
 
     const result = await response.json();
     if (result.success !== true) {
-      throw new Error(result.message || "残席情報を取得できませんでした。");
+      throw new Error(result.message || "受付状況を取得できませんでした。");
     }
 
     setAvailability(result);
   } catch (error) {
-    console.error("残席情報の取得に失敗しました。", error);
+    console.error("受付状況の取得に失敗しました。", error);
     availabilityStatus.className = "availability-status availability-status--error";
-    availabilityText.textContent = "残席情報を取得できませんでした。お申し込みの確定時に最新状況を確認します。";
+    availabilityText.textContent = "受付状況を取得できませんでした。お申し込みの確定時に最新状況を確認します。";
   }
 }
 
@@ -583,9 +581,16 @@ function handleRejectedResult(result, data) {
     return;
   }
 
-  if (data.participationType === "参加" && message.includes("残席")) {
+  const remaining = Number(result.remaining);
+  const requestedPeople = data.adults + data.children;
+
+  if (
+    data.participationType === "参加" &&
+    Number.isFinite(remaining) &&
+    requestedPeople > remaining
+  ) {
     returnToForm(adultsSelect);
-    showFormAlert(message, true);
+    showFormAlert("定員を超えるため、この人数では申し込みできません。参加人数を減らしてもう一度お試しください。", true);
     return;
   }
 
