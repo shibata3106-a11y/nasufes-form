@@ -61,9 +61,29 @@
         </article>
       </div>
 
-      <aside class="after-party-summary">
+      <aside class="after-party-summary" aria-label="二次会情報">
         <span class="after-party-summary__label">二次会</span>
-        <p><strong>17時30分～</strong>（席のみの予約、食事は個別注文になります）</p>
+        <dl class="after-party-summary__details">
+          <div>
+            <dt>開始</dt>
+            <dd><strong>17:30〜</strong></dd>
+          </div>
+          <div>
+            <dt>会場</dt>
+            <dd>愛知県名古屋市中村区名駅3-24-7<br>てしごと家　名駅店</dd>
+          </div>
+          <div>
+            <dt>会費</dt>
+            <dd>
+              大人 5,000円（現地払い）
+              <span class="after-party-summary__caution">※お子様は、席のみの予約です。お子様のお食事・お飲み物は個別注文・清算をお願いいたします。</span>
+            </dd>
+          </div>
+          <div>
+            <dt>幹事</dt>
+            <dd>カブさん</dd>
+          </div>
+        </dl>
       </aside>
     </section>
 
@@ -188,8 +208,9 @@
 
             <fieldset class="field-group after-party-section">
               <legend>二次会について <span class="required-badge">必須</span></legend>
+              <p class="after-party-section__note">17:30〜／二次会会費は現地払いです。</p>
+              <p class="after-party-section__caution">※お子様は、席のみの予約です。お子様のお食事・お飲み物は個別注文・清算をお願いいたします。</p>
               <div id="after-party-choice-block">
-                <p class="after-party-section__note">17:30〜／席のみの予約です。食事は個別注文になります。</p>
                 <div class="choice-list choice-list--two">
                   <label class="choice-card">
                     <input type="radio" name="afterPartyParticipation" value="参加" aria-describedby="after-party-error" aria-controls="after-party-fields" required>

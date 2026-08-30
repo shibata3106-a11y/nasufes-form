@@ -3,6 +3,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbytpkVI8Ikoj3LJYrlvxxEg
 const SUPPORT_PRICE = 2000;
 const MAX_PEOPLE = 5;
 const MAX_CHILD_AGE = 18;
+const AFTER_PARTY_START = "17:30〜";
+const AFTER_PARTY_LOCATION = "愛知県名古屋市中村区名駅3-24-7\nてしごと家　名駅店";
+const AFTER_PARTY_ADULT_FEE = 5000;
+const AFTER_PARTY_ORGANIZER = "カブさん";
+const AFTER_PARTY_CHILD_NOTE = "※お子様は、席のみの予約です。お子様のお食事・お飲み物は個別注文・清算をお願いいたします。";
 const PAYMENT_METHODS = Object.freeze({
   PAYPAY: "PayPay",
   ON_SITE: "現地支払い"
@@ -494,8 +499,12 @@ function showConfirmation(data) {
     addConfirmationRow("二次会大人人数", `${data.afterPartyAdults}人`);
     addConfirmationRow("二次会子ども人数", `${data.afterPartyChildren}人`);
     addConfirmationRow("二次会合計人数", `${data.afterPartyAdults + data.afterPartyChildren}人`);
-    addConfirmationRow("開始", "17:30〜");
-    addConfirmationRow("二次会のご案内", "席のみの予約、食事は個別注文になります");
+    addConfirmationRow("開始", AFTER_PARTY_START);
+    addConfirmationRow("二次会会場", AFTER_PARTY_LOCATION);
+    addConfirmationRow("二次会会費", "大人5,000円（現地払い）");
+    addConfirmationRow("二次会会費合計", formatYen(data.afterPartyAdults * AFTER_PARTY_ADULT_FEE));
+    addConfirmationRow("幹事", AFTER_PARTY_ORGANIZER);
+    addConfirmationRow("お子様について", AFTER_PARTY_CHILD_NOTE);
   } else {
     addConfirmationRow("二次会", "不参加");
   }
