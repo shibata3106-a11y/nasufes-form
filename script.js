@@ -40,15 +40,18 @@ const afterPartyChoiceBlock = document.getElementById("after-party-choice-block"
 const afterPartyFields = document.getElementById("after-party-fields");
 const afterPartyAdultsSelect = document.getElementById("after-party-adults");
 const afterPartyChildrenSelect = document.getElementById("after-party-children");
+const afterPartyClosedNotice = document.getElementById("after-party-closed-notice");
 const paymentMethod = document.getElementById("payment-method");
 const attendanceInputs = [...form.elements.attendance];
 const paymentInputs = [...form.elements.paymentChoice];
 const afterPartyInputs = [...form.elements.afterPartyParticipation];
 const participateInput = attendanceInputs.find((input) => input.value === "参加");
+const mainAbsentInput = attendanceInputs.find((input) => input.value === "本編不参加");
 const joinAfterPartyInput = afterPartyInputs.find((input) => input.value === "参加");
 const skipAfterPartyInput = afterPartyInputs.find((input) => input.value === "不参加");
 
 let isFull = false;
+let isAfterPartyClosed = false;
 let isSubmitting = false;
 let pendingSubmissionData = null;
 
@@ -230,7 +233,7 @@ function updateAttendanceFields() {
 
   afterPartyChoiceBlock.hidden = isMainAbsentWithAfterParty;
 
-  if (isMainAbsentWithAfterParty) {
+  if (isMainAbsentWithAfterParty && !isAfterPartyClosed) {
     joinAfterPartyInput.checked = true;
     skipAfterPartyInput.checked = false;
   }
@@ -259,6 +262,11 @@ function updateAttendanceFields() {
 }
 
 function updateAfterPartyFields() {
+  if (isAfterPartyClosed && joinAfterPartyInput.checked) {
+    joinAfterPartyInput.checked = false;
+    skipAfterPartyInput.checked = true;
+  }
+
   const isJoiningAfterParty = form.elements.afterPartyParticipation.value === "参加";
 
   afterPartyFields.hidden = !isJoiningAfterParty;
@@ -274,20 +282,57 @@ function updateAfterPartyFields() {
 
 }
 
+function setAfterPartyAvailability(result) {
+  if (typeof result.afterPartyClosed === "boolean") {
+    isAfterPartyClosed = result.afterPartyClosed;
+  }
+  afterPartyClosedNotice.hidden = !isAfterPartyClosed;
+
+  joinAfterPartyInput.disabled = isAfterPartyClosed;
+  joinAfterPartyInput.closest("label").classList.toggle("choice-card--disabled", isAfterPartyClosed);
+  joinAfterPartyInput.closest("label").setAttribute("aria-disabled", String(isAfterPartyClosed));
+
+  mainAbsentInput.disabled = isAfterPartyClosed;
+  mainAbsentInput.closest("label").classList.toggle("choice-card--disabled", isAfterPartyClosed);
+  mainAbsentInput.closest("label").setAttribute("aria-disabled", String(isAfterPartyClosed));
+
+  if (isAfterPartyClosed) {
+    if (mainAbsentInput.checked) {
+      mainAbsentInput.checked = false;
+    }
+
+    if (joinAfterPartyInput.checked || !form.elements.afterPartyParticipation.value) {
+      joinAfterPartyInput.checked = false;
+      skipAfterPartyInput.checked = true;
+    }
+
+    clearError("attendance", attendanceInputs.map((input) => input.closest("label")));
+    clearError("afterParty", afterPartyInputs.map((input) => input.closest("label")));
+    clearError("afterPartyPeople", [afterPartyAdultsSelect, afterPartyChildrenSelect]);
+  }
+
+  updateAttendanceFields();
+}
+
 function setAvailability(result) {
   const remaining = Number(result.remaining);
   const hasRemaining = Number.isFinite(remaining);
   const full = result.full === true || (hasRemaining && remaining <= 0);
 
   isFull = full;
+  setAfterPartyAvailability(result);
   availabilityStatus.className = "availability-status";
 
   if (full) {
     availabilityStatus.classList.add("availability-status--full");
-    availabilityText.textContent = "定員に達したため、本編参加の受付は終了しました。\n本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。";
+    availabilityText.textContent = isAfterPartyClosed
+      ? "定員に達したため、本編参加の受付は終了しました。PayPay支援は引き続き受け付けています。"
+      : "定員に達したため、本編参加の受付は終了しました。\n本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。";
   } else {
     availabilityStatus.classList.add("availability-status--open");
-    availabilityText.textContent = "現在、参加申し込みを受け付けています。";
+    availabilityText.textContent = isAfterPartyClosed
+      ? "本編参加とPayPay支援を受け付けています。二次会の参加受付は終了しました。"
+      : "現在、参加申し込みを受け付けています。";
   }
 
   participateInput.disabled = full;
@@ -330,6 +375,7 @@ function validateForm() {
   const attendance = form.elements.attendance.value;
   const isParticipating = attendance === "参加";
   const isSupporting = attendance === "PayPay支援";
+  const isMainAbsentWithAfterParty = attendance === "本編不参加";
   const afterPartyParticipation = form.elements.afterPartyParticipation.value;
   const isJoiningAfterParty = afterPartyParticipation === "参加";
   const selectedPaymentMethod = getSelectedPaymentMethod();
@@ -373,6 +419,10 @@ function validateForm() {
     showError("attendance", "定員に達したため、参加申し込みの受付は終了しました。", attendanceInputs.map((input) => input.closest("label")));
     firstInvalidElement = firstInvalidElement || attendanceInputs[0];
     isValid = false;
+  } else if (isMainAbsentWithAfterParty && isAfterPartyClosed) {
+    showError("attendance", "二次会の参加受付は終了しました。", attendanceInputs.map((input) => input.closest("label")));
+    firstInvalidElement = firstInvalidElement || mainAbsentInput;
+    isValid = false;
   }
 
   if (
@@ -412,6 +462,10 @@ function validateForm() {
     showError("afterParty", "二次会への参加・不参加を選択してください。", afterPartyInputs.map((input) => input.closest("label")));
     firstInvalidElement = firstInvalidElement || afterPartyInputs[0];
     isValid = false;
+  } else if (isJoiningAfterParty && isAfterPartyClosed) {
+    showError("afterParty", "二次会の参加受付は終了しました。", afterPartyInputs.map((input) => input.closest("label")));
+    firstInvalidElement = firstInvalidElement || skipAfterPartyInput;
+    isValid = false;
   }
 
   if (
@@ -434,7 +488,9 @@ function buildSubmissionData() {
   const participationType = form.elements.attendance.value;
   const isParticipating = participationType === "参加";
   const isSupporting = participationType === "PayPay支援";
-  const afterPartyParticipation = form.elements.afterPartyParticipation.value;
+  const afterPartyParticipation = isAfterPartyClosed
+    ? "不参加"
+    : form.elements.afterPartyParticipation.value;
   const isJoiningAfterParty = afterPartyParticipation === "参加";
 
   return {
@@ -537,6 +593,10 @@ function isFullResult(result) {
   return result.full === true || getResultMessage(result).includes("定員に達した");
 }
 
+function isAfterPartyClosedResult(result) {
+  return result.afterPartyClosed === true || getResultMessage(result).includes("二次会の参加受付は終了しました");
+}
+
 function showSuccess(result, data) {
   hideFormAlert();
   form.hidden = true;
@@ -583,10 +643,26 @@ function handleRejectedResult(result, data) {
     return;
   }
 
+  if (isAfterPartyClosedResult(result)) {
+    setAfterPartyAvailability({ ...result, afterPartyClosed: true });
+    returnToForm();
+    let closedMessage = "二次会の参加受付は終了しました。本編のみのお申し込みは可能です。";
+    if (data.participationType === "本編不参加") {
+      closedMessage = "二次会の参加受付は終了しました。";
+    } else if (data.participationType === "PayPay支援") {
+      closedMessage = "二次会の参加受付は終了しました。PayPay支援のみのお申し込みは可能です。";
+    }
+    showFormAlert(closedMessage, true);
+    return;
+  }
+
   if (data.participationType === "参加" && isFullResult(result)) {
     setAvailability({ ...result, full: true, remaining: 0 });
     returnToForm();
-    showFormAlert("定員に達しました。本編参加の受付は終了しました。本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。", true);
+    const fullMessage = isAfterPartyClosed
+      ? "定員に達しました。本編参加の受付は終了しました。PayPay支援は引き続き受け付けています。"
+      : "定員に達しました。本編参加の受付は終了しました。本編不参加・PayPay支援・二次会のお申し込みは引き続き受け付けています。";
+    showFormAlert(fullMessage, true);
     return;
   }
 

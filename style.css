@@ -664,6 +664,18 @@ select {
   line-height: 1.7;
 }
 
+.after-party-closed-notice {
+  margin: 0 0 16px;
+  padding: 13px 15px;
+  border: 1px solid #e6c7ce;
+  border-radius: 8px;
+  color: #8f243a;
+  background: #fff5f7;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .after-party-fields {
   margin-top: 17px;
   padding: 21px;

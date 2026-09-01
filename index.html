@@ -126,7 +126,7 @@
                   <span>ナスフェスに参加します</span>
                 </label>
                 <label class="choice-card">
-                  <input type="radio" name="attendance" value="本編不参加" aria-controls="participant-fields support-notice support-fields">
+                  <input type="radio" id="main-absent-after-party" name="attendance" value="本編不参加" aria-controls="participant-fields support-notice support-fields">
                   <span>ナスフェス本編には参加できませんが二次会に参加します</span>
                 </label>
                 <label class="choice-card">
@@ -210,6 +210,7 @@
               <legend>二次会について <span class="required-badge">必須</span></legend>
               <p class="after-party-section__note">17:30〜／二次会会費は現地払いです。</p>
               <p class="after-party-section__caution">※お子様は、席のみの予約です。お子様のお食事・お飲み物は個別注文・清算をお願いいたします。</p>
+              <p class="after-party-closed-notice" id="after-party-closed-notice" role="status" aria-live="polite" hidden>二次会の参加受付は終了しました。</p>
               <div id="after-party-choice-block">
                 <div class="choice-list choice-list--two">
                   <label class="choice-card">
